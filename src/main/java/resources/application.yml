@@ -1,0 +1,30 @@
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/test?useJDBCCompliantTimezoneShift=true&serverTimezone=UTC
+    username: test
+    password: test
+
+  thymeleaf:
+    enabled: true
+    encoding: UTF-8
+    cache: false
+    check-template: true
+    check-template-location: true
+    mode: HTML
+    template-resolver-order: 0
+
+logging:
+  level:
+    org.springframework.web: ERROR
+    com.mkyong: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file: D:\\SLF4J_logging.log
