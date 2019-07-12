@@ -1,11 +1,10 @@
 package chat.operations.logic;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
@@ -15,9 +14,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-
 @Service
-public class ClientWindow extends JFrame {
+public class Client extends JFrame {
     private static final String SERVER_HOST = "localhost";
     private static final int SERVER_PORT = 3443;
     private Socket clientSocket;
@@ -28,11 +26,8 @@ public class ClientWindow extends JFrame {
     private JTextArea jtaTextAreaMessage;
     private String clientName = "";
 
-    public String getClientName() {
-        return this.clientName;
-    }
-
-    public ClientWindow() {
+    @Autowired
+    public Client() {
         try {
             clientSocket = new Socket(SERVER_HOST, SERVER_PORT);
             inMessage = new Scanner(clientSocket.getInputStream());
@@ -58,14 +53,11 @@ public class ClientWindow extends JFrame {
         bottomPanel.add(jtfMessage, BorderLayout.CENTER);
         jtfName = new JTextField("Введите ваше имя: ");
         bottomPanel.add(jtfName, BorderLayout.WEST);
-        jbSendMessage.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!jtfMessage.getText().trim().isEmpty() && !jtfName.getText().trim().isEmpty()) {
-                    clientName = jtfName.getText();
-                    sendMsg();
-                    jtfMessage.grabFocus();
-                }
+        jbSendMessage.addActionListener(e -> {
+            if (!jtfMessage.getText().trim().isEmpty() && !jtfName.getText().trim().isEmpty()) {
+                clientName = jtfName.getText();
+                sendMsg();
+                jtfMessage.grabFocus();
             }
         });
         jtfMessage.addFocusListener(new FocusAdapter() {
@@ -80,24 +72,21 @@ public class ClientWindow extends JFrame {
                 jtfName.setText("");
             }
         });
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while (true) {
-                        if (inMessage.hasNext()) {
-                            String inMes = inMessage.nextLine();
-                            String clientsInChat = "Клиентов в чате = ";
-                            if (inMes.indexOf(clientsInChat) == 0) {
-                                jlNumberOfClients.setText(inMes);
-                            } else {
-                                jtaTextAreaMessage.append(inMes);
-                                jtaTextAreaMessage.append("\n");
-                            }
+        new Thread(() -> {
+            try {
+                while (true) {
+                    if (inMessage.hasNext()) {
+                        String inMes = inMessage.nextLine();
+                        String clientsInChat = "Клиентов в чате = ";
+                        if (inMes.indexOf(clientsInChat) == 0) {
+                            jlNumberOfClients.setText(inMes);
+                        } else {
+                            jtaTextAreaMessage.append(inMes);
+                            jtaTextAreaMessage.append("\n");
                         }
                     }
-                } catch (Exception e) {
                 }
+            } catch (Exception e) {
             }
         }).start();
         addWindowListener(new WindowAdapter() {

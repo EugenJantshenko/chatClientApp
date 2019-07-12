@@ -1,15 +1,18 @@
 package chat;
 
-import chat.operations.logic.ClientWindow;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
 @SpringBootApplication
 public class Application {
 
 	public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-		ClientWindow clientWindow = new ClientWindow();
+        new SpringApplicationBuilder(Application.class)
+				.web(WebApplicationType.NONE)
+				.headless(false)
+				.run(args);
+
 	}
 }
 
